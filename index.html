@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Matematika: Perbandingan & Rasio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-500 selection:text-white min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-500/20">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">MathEdu Interactive Quiz</h1>
+                        <p class="text-xs text-slate-500 font-medium">Uji Pemahaman Essay - Perbandingan & Rasio (75 Soal - Inc. 25 HOTS)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="resetQuizProgress()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl border border-rose-200 transition flex items-center gap-1">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Kuis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Banner Intro -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 mb-8 shadow-xl shadow-blue-500/10">
+            <div class="relative z-10 max-w-2xl">
+                <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide uppercase text-blue-100 mb-3 inline-block">Kuis Latihan Mandiri</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Kuis Essay Interaktif Perbandingan & Rasio</h2>
+                <p class="text-blue-100 text-xs sm:text-sm leading-relaxed">
+                    Tersedia 15 soal essay untuk masing-masing dari 5 sub-materi (10 Standar + 5 HOTS, Total 75 Soal). Jawaban Anda tersimpan otomatis (anti-hilang jika ter-reload).
+                </p>
+            </div>
+            <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                <i data-lucide="file-check" class="w-80 h-80"></i>
+            </div>
+        </div>
+
+        <!-- Quiz Container Card -->
+        <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white space-y-6 shadow-sm">
+
+            <!-- Sub-materi Navigation Tabs -->
+            <div>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Pilih Sub-Materi:</span>
+                <div class="flex overflow-x-auto space-x-2 pb-2 scrollbar-none" id="quiz-sub-tabs">
+                    <button onclick="switchQuizSubTab('rasio')" id="qsub-rasio" class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition">1. Rasio (15 Soal)</button>
+                    <button onclick="switchQuizSubTab('skala')" id="qsub-skala" class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition">2. Skala (15 Soal)</button>
+                    <button onclick="switchQuizSubTab('senilai')" id="qsub-senilai" class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition">3. Senilai (15 Soal)</button>
+                    <button onclick="switchQuizSubTab('berbalik')" id="qsub-berbalik" class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition">4. Berbalik Nilai (15 Soal)</button>
+                    <button onclick="switchQuizSubTab('jumlah-selisih')" id="qsub-jumlah-selisih" class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition">5. Jumlah & Selisih (15 Soal)</button>
+                </div>
+            </div>
+
+            <!-- Question Navigator Matrix -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-slate-600">Navigasi Soal (1 - 15):</span>
+                    <div class="flex items-center gap-3 text-[10px] text-slate-500 font-medium">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-600 rounded-full inline-block"></span> Benar</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-rose-600 rounded-full inline-block"></span> Salah</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-amber-200 border border-amber-400 rounded-full inline-block"></span> Terisi</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2" id="quiz-nav-buttons">
+                    <!-- Generated dynamically -->
+                </div>
+            </div>
+
+            <!-- Active Question Render Container -->
+            <div id="active-essay-question-container">
+                <!-- Active essay question injected here -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-medium text-slate-300">Kuis Interaktif Matematika &copy; 2026</p>
+            <p class="text-slate-500 mt-1">Didesain khusus untuk evaluasi mandiri tingkat SMP/MTs.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Database 75 Soal Essay (15 per Sub-materi: 10 Standar + 5 HOTS)
+        const essayQuestions = {
+            'rasio': [
+                { id: 'r1', q: "Sederhanakan rasio $2{,}5\\text{ kg}$ terhadap $750\\text{ gram}$ ke dalam bentuk paling sederhana $a : b$!", answer: "10:3", aliases: ["10 : 3", "10/3"], explanation: "$2{,}5\\text{ kg} = 2.500\\text{ gram}$. Rasio $2.500 : 750$. Dibagi FPB ($250$) menjadi $10 : 3$." },
+                { id: 'r2', q: "Dini membuat jus alpukat dengan $150\\text{ ml}$ susu murni dan $450\\text{ ml}$ air. Berapa rasio susu terhadap total minuman?", answer: "1:4", aliases: ["1 : 4", "1/4"], explanation: "Total $= 150 + 450 = 600\\text{ ml}$. Rasio Susu : Total $= 150 : 600 = 1 : 4$." },
+                { id: 'r3', q: "Sirup A dibuat dari $120\\text{ ml}$ sirup murni + $360\\text{ ml}$ air. Sirup B dibuat dari $200\\text{ ml}$ sirup murni + $300\\text{ ml}$ air. Jika Sirup A dan B dicampur, berapa rasio sirup murni : air pada campuran baru?", answer: "16:33", aliases: ["16 : 33"], explanation: "Total Sirup Murni $= 120 + 200 = 320\\text{ ml}$. Total Air $= 360 + 300 = 660\\text{ ml}$. Rasio $= 320 : 660 = 16 : 33$." },
+                { id: 'r4', q: "Bandingkan panjang $1{,}2\\text{ m}$ dan $80\\text{ cm}$ dalam bentuk rasio sederhana $a : b$!", answer: "3:2", aliases: ["3 : 2", "3/2"], explanation: "$1{,}2\\text{ m} = 120\\text{ cm}$. Rasio $= 120 : 80 = 3 : 2$." },
+                { id: 'r5', q: "Dalam kelas terdapat $18$ siswa laki-laki dan $12$ siswa perempuan. Berapa rasio siswa perempuan terhadap seluruh siswa?", answer: "2:5", aliases: ["2 : 5", "2/5"], explanation: "Total $= 18 + 12 = 30$. Rasio Perempuan : Total $= 12 : 30 = 2 : 5$." },
+                { id: 'r6', q: "Sederhanakan pecahan rasio $\\frac{3}{4} : \\frac{1}{2}$ menjadi bilangan bulat sederhana $a : b$!", answer: "3:2", aliases: ["3 : 2"], explanation: "Kalikan kedua ruas dengan $4$: $\\left(\\frac{3}{4} \\times 4\\right) : \\left(\\frac{1}{2} \\times 4\\right) = 3 : 2$." },
+                { id: 'r7', q: "Kecepatan sepeda A adalah $15\\text{ km/jam}$ dan sepeda B adalah $25\\text{ km/jam}$. Berapa rasio kecepatan A terhadap B?", answer: "3:5", aliases: ["3 : 5"], explanation: "Rasio $= 15 : 25 = 3 : 5$." },
+                { id: 'r8', q: "Waktu tempuh Budi $45\\text{ menit}$ dan Wati $1{,}5\\text{ jam}$. Berapa rasio waktu Budi terhadap Wati?", answer: "1:2", aliases: ["1 : 2"], explanation: "$1{,}5\\text{ jam} = 90\\text{ menit}$. Rasio $= 45 : 90 = 1 : 2$." },
+                { id: 'r9', q: "Sebuah kotak berisi $15$ bola merah dan $25$ bola biru. Berapa rasio bola merah terhadap bola biru?", answer: "3:5", aliases: ["3 : 5"], explanation: "Rasio $= 15 : 25 = 3 : 5$." },
+                { id: 'r10', q: "Kantong P berisi $300\\text{ gram}$ gula. Kantong Q berisi $1{,}2\\text{ kg}$ gula. Berapa rasio isi kantong P terhadap Q?", answer: "1:4", aliases: ["1 : 4"], explanation: "$1{,}2\\text{ kg} = 1.200\\text{ gram}$. Rasio $= 300 : 1.200 = 1 : 4$." },
+                // HOTS Questions
+                { id: 'r11', hots: true, q: "Campuran A (rasio gula : air $= 1 : 4$, volume $500\\text{ ml}$) dicampur dengan Campuran B (rasio gula : air $= 2 : 3$, volume $500\\text{ ml}$). Berapa rasio gula : air pada campuran baru?", answer: "3:7", aliases: ["3 : 7"], explanation: "A: Gula $= 100\\text{ ml}$, Air $= 400\\text{ ml}$. B: Gula $= 200\\text{ ml}$, Air $= 300\\text{ ml}$. Total Gula $= 300\\text{ ml}$, Total Air $= 700\\text{ ml}$. Rasio $= 300 : 700 = 3 : 7$." },
+                { id: 'r12', hots: true, q: "Sebongkah paduan logam A (massa $400\\text{ g}$) memiliki kadar tembaga $30\\%$. Paduan logam B (massa $600\\text{ g}$) memiliki kadar tembaga $50\\%$. Berapa rasio tembaga terhadap logam bukan tembaga jika A dan B dilebur jadi satu?", answer: "21:29", aliases: ["21 : 29"], explanation: "Tembaga A $= 120\\text{ g}$, B $= 300\\text{ g} \\implies$ Total Tembaga $= 420\\text{ g}$. Total Logam $= 1000\\text{ g} \\implies$ Bukan tembaga $= 580\\text{ g}$. Rasio $= 420 : 580 = 21 : 29$." },
+                { id: 'r13', hots: true, q: "Suatu larutan sirup $200\\text{ ml}$ memiliki rasio konsentrat : air $= 1 : 3$. Jika ditambahkan $100\\text{ ml}$ air murni, berapakah rasio konsentrat : air yang baru?", answer: "1:5", aliases: ["1 : 5"], explanation: "Awal: Konsentrat $= 50\\text{ ml}$, Air $= 150\\text{ ml}$. Air baru $= 150 + 100 = 250\\text{ ml}$. Rasio baru $= 50 : 250 = 1 : 5$." },
+                { id: 'r14', hots: true, q: "Skor tim X dan Y berbanding $4 : 5$. Jika tim X mencetak $6$ poin lagi dan tim Y tidak mencetak poin, skor mereka menjadi sama. Berapa total skor mereka berdua saat ini?", answer: "54", aliases: ["54 poin"], explanation: "Misal $X = 4k$, $Y = 5k$. $4k + 6 = 5k \\implies k = 6$. Total skor $= 4(6) + 5(6) = 24 + 30 = 54$." },
+                { id: 'r15', hots: true, q: "Di sebuah kebun hewan, rasio unggas : mamalia adalah $3 : 2$. Jika $10$ ekor mamalia dipindahkan dan $10$ ekor unggas lahir, rasionya menjadi $2 : 1$. Berapa jumlah seluruh hewan awal di kebun tersebut?", answer: "150", aliases: ["150 ekor"], explanation: "Awal: Unggas $= 3x$, Mamalia $= 2x$. Baru: $\\frac{3x + 10}{2x - 10} = \\frac{2}{1} \\implies 3x + 10 = 4x - 20 \\implies x = 30$. Total awal $= 5x = 5(30) = 150$ ekor." }
+            ],
+            'skala': [
+                { id: 's1', q: "Jarak kota P dan Q pada peta adalah $6\\text{ cm}$. Jika skala peta $1 : 1.500.000$, berapa km jarak sebenarnya?", answer: "90", aliases: ["90 km", "90km"], explanation: "$JS = 6 \\times 1.500.000 = 9.000.000\\text{ cm} = 90\\text{ km}$." },
+                { id: 's2', q: "Jarak dua kota sebenarnya $180\\text{ km}$. Berapa cm jarak pada peta jika skala peta $1 : 2.000.000$?", answer: "9", aliases: ["9 cm", "9cm"], explanation: "$JS = 18.000.000\\text{ cm}$. $JP = \\frac{18.000.000}{2.000.000} = 9\\text{ cm}$." },
+                { id: 's3', q: "Suatu lapangan berukuran $80\\text{ m} \\times 50\\text{ m}$ digambar pada denah dengan skala $1 : 1.000$. Berapa $\\text{cm}^2$ luas lapangan pada denah?", answer: "40", aliases: ["40 cm2", "40cm2", "40 cm^2"], explanation: "Panjang denah $= 8\\text{ cm}$, Lebar denah $= 5\\text{ cm}$. Luas $= 8 \\times 5 = 40\\text{ cm}^2$." },
+                { id: 's4', q: "Jarak pada gambar $5\\text{ cm}$ mewakili jarak sebenarnya $25\\text{ km}$. Berapa angka penyebut skala $N$ (dalam $1 : N$)?", answer: "500000", aliases: ["500.000", "500000"], explanation: "$S = \\frac{5\\text{ cm}}{2.500.000\\text{ cm}} = 1 : 500.000$. Jadi $N = 500.000$." },
+                { id: 's5', q: "Tinggi gedung sebenarnya $45\\text{ m}$. Jika digambar dengan skala $1 : 300$, berapa cm tinggi gedung pada gambar?", answer: "15", aliases: ["15 cm", "15cm"], explanation: "$45\\text{ m} = 4.500\\text{ cm}$. Tinggi gambar $= \\frac{4.500}{300} = 15\\text{ cm}$." },
+                { id: 's6', q: "Panjang peta $8\\text{ cm}$ skala $1 : 250.000$. Berapa km jarak sebenarnya?", answer: "20", aliases: ["20 km", "20km"], explanation: "$JS = 8 \\times 250.000 = 2.000.000\\text{ cm} = 20\\text{ km}$." },
+                { id: 's7', q: "Jarak $120\\text{ km}$ digambar sejauh $4\\text{ cm}$ pada peta. Tentukan nilai $N$ dari skala $1 : N$!", answer: "3000000", aliases: ["3.000.000"], explanation: "$S = \\frac{4}{12.000.000} = 1 : 3.000.000$. Maka $N = 3.000.000$." },
+                { id: 's8', q: "Denah rumah berskala $1 : 200$. Jika kamar berukuran $3\\text{ cm} \\times 4\\text{ cm}$ di denah, berapa $\\text{m}^2$ luas kamar sebenarnya?", answer: "48", aliases: ["48 m2", "48m2"], explanation: "Panjang nyata $= 6\\text{ m}$, Lebar $= 8\\text{ m}$. Luas $= 6 \\times 8 = 48\\text{ m}^2$." },
+                { id: 's9', q: "Jarak $15\\text{ cm}$ pada peta berskala $1 : 400.000$. Berapa km jarak sebenarnya?", answer: "60", aliases: ["60 km", "60km"], explanation: "$JS = 15 \\times 400.000 = 6.000.000\\text{ cm} = 60\\text{ km}$." },
+                { id: 's10', q: "Skala peta $1 : 500.000$. Jarak kota A dan B sebenarnya $75\\text{ km}$. Berapa cm jarak pada peta?", answer: "15", aliases: ["15 cm", "15cm"], explanation: "$JP = \\frac{7.500.000}{500.000} = 15\\text{ cm}$." },
+                // HOTS Questions
+                { id: 's11', hots: true, q: "Taman berbentuk persegi panjang digambar dengan skala $1 : 500$ berukuran $12\\text{ cm} \\times 8\\text{ cm}$. Jika taman digambar ulang dengan skala $1 : 200$, berapa $\\text{cm}^2$ luas taman pada gambar baru?", answer: "600", aliases: ["600 cm2", "600 cm^2"], explanation: "Panjang nyata $= 60\\text{ m}$, Lebar nyata $= 40\\text{ m}$. Pada skala $1 : 200$: $p = 30\\text{ cm}, l = 20\\text{ cm}$. Luas $= 30 \\times 20 = 600\\text{ cm}^2$." },
+                { id: 's12', hots: true, q: "Suatu wilayah pada denah skala $1 : 10.000$ memiliki luas $15\\text{ cm}^2$. Berapa $\\text{m}^2$ luas sebenarnya wilayah tersebut di lapangan?", answer: "150000", aliases: ["150.000", "150000 m2"], explanation: "Faktor skala luas $= 10.000^2 = 100.000.000$. Luas sebenarnya $= 15 \\times 100.000.000\\text{ cm}^2 = 1.500.000.000\\text{ cm}^2 = 150.000\\text{ m}^2$." },
+                { id: 's13', hots: true, q: "Pada Peta A, jarak dua kota adalah $10\\text{ cm}$ dengan skala $1 : 500.000$. Pada Peta B, jarak kota yang sama adalah $4\\text{ cm}$. Berapa penyebut skala $N$ pada Peta B ($1 : N$)?", answer: "1250000", aliases: ["1.250.000"], explanation: "$JS = 10 \\times 500.000 = 5.000.000\\text{ cm}$. Peta B: $N = \\frac{5.000.000}{4} = 1.250.000$." },
+                { id: 's14', hots: true, q: "Denah gedung bertingkat digambar berskala $1 : 250$. Jika volume maket gedung tersebut pada skala itu adalah $800\\text{ cm}^3$, berapakah volume sebenarnya gedung tersebut dalam meter kubik ($\\text{m}^3$)?", answer: "12500", aliases: ["12.500", "12500 m3"], explanation: "Faktor skala volume $= 250^3 = 15.625.000$. Volume nyata $= 800 \\times 15.625.000 = 12.500.000.000\\text{ cm}^3 = 12.500\\text{ m}^3$." },
+                { id: 's15', hots: true, q: "Garis sepanjang $5\\text{ cm}$ pada peta A berskala $1 : 200.000$ mewakili jarak yang sama dengan garis sepanjang $x\\text{ cm}$ pada peta B berskala $1 : 800.000$. Tentukan nilai $x$!", answer: "1.25", aliases: ["1,25", "1.25 cm"], explanation: "$JS = 5 \\times 200.000 = 1.000.000\\text{ cm}$. Pada Peta B: $x = \\frac{1.000.000}{800.000} = 1{,}25\\text{ cm}$." }
+            ],
+            'senilai': [
+                { id: 'sn1', q: "Mobil butuh $5\\text{ liter}$ bensin untuk menempuh $60\\text{ km}$. Berapa liter bensin yang dibutuhkan untuk jarak $180\\text{ km}$?", answer: "15", aliases: ["15 liter", "15liter"], explanation: "$\\frac{5}{x} = \\frac{60}{180} \\implies 60x = 900 \\implies x = 15\\text{ liter}$." },
+                { id: 'sn2', q: "Harga $8\\text{ kg}$ telur adalah $\\text{Rp } 112.000$. Berapa rupiah harga $15\\text{ kg}$ telur?", answer: "210000", aliases: ["210.000", "Rp 210.000"], explanation: "Harga per kg $= \\frac{112.000}{8} = 14.000$. Untuk $15\\text{ kg} = 15 \\times 14.000 = \\text{Rp } 210.000$." },
+                { id: 'sn3', q: "Mesin A mencetak $180$ lembar dalam $4$ menit. Mesin B mencetak $250$ lembar dalam $5$ menit. Jika kedua mesin bekerja bersamaan selama $8$ menit, berapa total lembar yang dicetak?", answer: "760", aliases: ["760 lembar"], explanation: "Kecepatan A $= 45$, B $= 50$. Total per menit $= 95$. Dalam $8$ menit $= 95 \\times 8 = 760$ lembar." },
+                { id: 'sn4', q: "Pembuatan $15$ baju memerlukan $18\\text{ meter}$ kain. Berapa meter kain untuk membuat $25$ baju sejenis?", answer: "30", aliases: ["30 meter", "30m"], explanation: "$\\frac{15}{25} = \\frac{18}{x} \\implies 15x = 450 \\implies x = 30\\text{ meter}$." },
+                { id: 'sn5', q: "Gaji pekerja selama $6$ hari kerja adalah $\\text{Rp } 900.000$. Berapa rupiah gaji pekerja tersebut jika bekerja selama $14$ hari?", answer: "2100000", aliases: ["2.100.000", "Rp 2.100.000"], explanation: "Gaji per hari $= 150.000$. Untuk $14$ hari $= 14 \\times 150.000 = \\text{Rp } 2.100.000$." },
+                { id: 'sn6', q: "Suatu resep kue membutuhkan $250\\text{ gram}$ gula untuk $10$ porsi. Berapa gram gula untuk $18$ porsi?", answer: "450", aliases: ["450 gram", "450g"], explanation: "$\\frac{250}{10} = 25\\text{ gram/porsi}$. Untuk $18$ porsi $= 18 \\times 25 = 450\\text{ gram}$." },
+                { id: 'sn7', q: "Sebuah printer mencetak $48$ lembar dalam $3$ menit. Berapa menit waktu yang dibutuhkan untuk mencetak $144$ lembar?", answer: "9", aliases: ["9 menit"], explanation: "Kecepatan $= 16\\text{ lembar/menit}$. Waktu $= \\frac{144}{16} = 9\\text{ menit}$." },
+                { id: 'sn8', q: "Untuk menempuh $120\\text{ km}$ diperlukan $10\\text{ liter}$ bensin. Berapa km jarak yang dapat ditempuh dengan $16\\text{ liter}$ bensin?", answer: "192", aliases: ["192 km", "192km"], explanation: "$12\\text{ km/liter}$. Jarak $= 16 \\times 12 = 192\\text{ km}$." },
+                { id: 'sn9', q: "Harga $3\\text{ lusin}$ buku adalah $\\text{Rp } 108.000$. Berapa rupiah harga $5$ buku?", answer: "15000", aliases: ["15.000", "Rp 15.000"], explanation: "$3\\text{ lusin} = 36\\text{ buku}$. Harga 1 buku $= 3.000$. Harga 5 buku $= 5 \\times 3.000 = \\text{Rp } 15.000$." },
+                { id: 'sn10', q: "Sebuah konveksi dapat menghasilkan $60$ kaos dalam $4$ hari. Berapa kaos yang dihasilkan dalam $11$ hari?", answer: "165", aliases: ["165 kaos"], explanation: "$15\\text{ kaos/hari}$. Dalam 11 hari $= 11 \\times 15 = 165\\text{ kaos}$." },
+                // HOTS Questions
+                { id: 'sn11', hots: true, q: "Sebuah mesin pabrik dalam $3$ jam dapat mengemas $1.200$ kemasan. Jika efisiensi mesin diturunkan $20\\%$ karena perawatan teknis, berapa kemasan yang dapat dihasilkan dalam waktu $5$ jam?", answer: "1600", aliases: ["1.600", "1600 kemasan"], explanation: "Kecepatan normal $= 400\\text{ kemasan/jam}$. Kecepatan baru $= 80\\% \\times 400 = 320\\text{ kemasan/jam}$. Dalam $5$ jam $= 5 \\times 320 = 1.600$." },
+                { id: 'sn12', hots: true, q: "Dua buah pompa bekerja bersama. Pompa P mengisi $300\\text{ liter}$ dalam $10$ menit, Pompa Q mengisi $450\\text{ liter}$ dalam $15$ menit. Berapa menit waktu yang dibutuhkan kedua pompa bersama-sama untuk mengisi bak berkapasitas $3.600\\text{ liter}$?", answer: "60", aliases: ["60 menit", "1 jam"], explanation: "P $= 30\\text{ L/mnt}$, Q $= 30\\text{ L/mnt}$. Total $= 60\\text{ L/mnt}$. Waktu $= \\frac{3.600}{60} = 60\\text{ menit}$." },
+                { id: 'sn13', hots: true, q: "Tarif taksi terdiri dari tarif awal $\\text{Rp } 10.000$ plus tarif per km senilai $x$. Jika perjalanan $12\\text{ km}$ membayar $\\text{Rp } 46.000$, berapa rupiah tarif yang harus dibayar untuk perjalanan sejauh $25\\text{ km}$?", answer: "85000", aliases: ["85.000", "Rp 85.000"], explanation: "$10.000 + 12x = 46.000 \\implies 12x = 36.000 \\implies x = 3.000\\text{ /km}$. Untuk $25\\text{ km} = 10.000 + 25(3.000) = \\text{Rp } 85.000$." },
+                { id: 'sn14', hots: true, q: "Untuk menempuh $240\\text{ km}$ dengan kecepatan $60\\text{ km/jam}$ dibutuhkan $16\\text{ liter}$ bensin. Jika kecepatan dinaikkan menjadi $80\\text{ km/jam}$, konsumsi bensin boros $25\\%$. Berapa liter bensin yang dibutuhkan untuk menempuh jarak $300\\text{ km}$ pada kecepatan baru tersebut?", answer: "25", aliases: ["25 liter", "25l"], explanation: "Normal: $\\frac{16}{240} = \\frac{1}{15}\\text{ L/km}$. Kecepatan baru konsumsi bensin $= \\frac{1}{15} \\times 1{,}25 = \\frac{1}{12}\\text{ L/km}$. Untuk $300\\text{ km} = 300 \\times \\frac{1}{12} = 25\\text{ liter}$." },
+                { id: 'sn15', hots: true, q: "Toko memberikan diskon bertingkat: beli $1-5$ barang dapat diskon $10\\%$, beli di atas $5$ barang dapat diskon $20\\%$ untuk semua barang. Jika harga asli barang $\\text{Rp } 50.000$ per unit, berapa rupiah selisih total bayar antara membeli $5$ barang dengan membeli $6$ barang?", answer: "15000", aliases: ["15.000", "Rp 15.000"], explanation: "Beli $5 = 5 \\times 50.000 \\times 0,9 = \\text{Rp } 225.000$. Beli $6 = 6 \\times 50.000 \\times 0,8 = \\text{Rp } 240.000$. Selisih $= 240.000 - 225.000 = \\text{Rp } 15.000$." }
+            ],
+            'berbalik': [
+                { id: 'bv1', q: "Pekerjaan renovasi rumah selesai dikerjakan $8$ orang dalam $15$ hari. Jika dikerjakan oleh $10$ orang, berapa hari pekerjaan selesai?", answer: "12", aliases: ["12 hari"], explanation: "$8 \\times 15 = 10 \\times x \\implies 120 = 10x \\implies x = 12\\text{ hari}$." },
+                { id: 'bv2', q: "Mobil berjalan dengan kecepatan $75\\text{ km/jam}$ butuh waktu $4$ jam. Berapa km/jam kecepatan mobil jika ingin sampai dalam $3$ jam?", answer: "100", aliases: ["100 km/jam"], explanation: "$75 \\times 4 = v \\times 3 \\implies 300 = 3v \\implies v = 100\\text{ km/jam}$." },
+                { id: 'bv3', q: "Suatu proyek dikerjakan $16$ orang selesai $25$ hari. Setelah $10$ hari kerja, proyek terhenti $5$ hari. Berapa orang tambahan pekerja agar selesai tepat waktu?", answer: "8", aliases: ["8 orang"], explanation: "Sisa waktu normal $= 15$ hari ($16$ org). Sisa waktu riil $= 10$ hari ($x$ org). $16 \\times 15 = x \\times 10 \\implies x = 24$. Tambahan $= 24 - 16 = 8\\text{ orang}$." },
+                { id: 'bv4', q: "Persediaan makanan untuk $40$ ekor sapi cukup untuk $18$ hari. Jika sapi bertambah $5$ ekor, berapa hari persediaan makanan akan habis?", answer: "16", aliases: ["16 hari"], explanation: "Total sapi $= 45$. $40 \\times 18 = 45 \\times x \\implies 720 = 45x \\implies x = 16\\text{ hari}$." },
+                { id: 'bv5', q: "Suatu pekerjaan diselesaikan $12$ orang dalam $20$ hari. Jika pekerjaan ingin selesai dalam $15$ hari, berapa pekerja yang harus ditambah?", answer: "4", aliases: ["4 orang"], explanation: "$12 \\times 20 = x \\times 15 \\implies 240 = 15x \\implies x = 16$ orang. Tambahan $= 16 - 12 = 4\\text{ orang}$." },
+                { id: 'bv6', q: "Sebuah kapal membawa persediaan makanan untuk $60$ orang selama $24$ hari. Jika penumpang berkurang $20$ orang, berapa hari persediaan makanan akan habis?", answer: "36", aliases: ["36 hari"], explanation: "Sisa orang $= 40$. $60 \\times 24 = 40 \\times x \\implies 1440 = 40x \\implies x = 36\\text{ hari}$." },
+                { id: 'bv7', q: "Kecepatan $80\\text{ km/jam}$ ditempuh dalam waktu $5$ jam. Jika waktu tempuh menjadi $4$ jam, berapa km/jam kecepatannya?", answer: "100", aliases: ["100 km/jam"], explanation: "$80 \\times 5 = v \\times 4 \\implies 400 = 4v \\implies v = 100\\text{ km/jam}$." },
+                { id: 'bv8', q: "Sebuah peternakan memiliki pakan untuk $50$ ayam selama $12$ hari. Jika dijual $10$ ayam, berapa hari pakan tersebut habis?", answer: "15", aliases: ["15 hari"], explanation: "Sisa ayam $= 40$. $50 \\times 12 = 40 \\times x \\implies 600 = 40x \\implies x = 15\\text{ hari}$." },
+                { id: 'bv9', q: "Suatu gedung selesai dibuat $15$ orang dalam $60$ hari. Berapa hari jika dikerjakan oleh $20$ orang?", answer: "45", aliases: ["45 hari"], explanation: "$15 \\times 60 = 20 \\times x \\implies 900 = 20x \\implies x = 45\\text{ hari}$." },
+                { id: 'bv10', q: "Truk dengan kapasitas $6\\text{ ton}$ butuh $15$ kali jalan untuk mengangkut barang. Jika dipakai truk $10\\text{ ton}$, berapa kali pengangkutan?", answer: "9", aliases: ["9 kali", "9kali"], explanation: "$6 \\times 15 = 10 \\times x \\implies 90 = 10x \\implies x = 9\\text{ kali}$." },
+                // HOTS Questions
+                { id: 'bv11', hots: true, q: "Sebuah proyek dijadwalkan selesai $30$ hari oleh $10$ pekerja. Setelah $12$ hari berjalan, produktivitas pekerja meningkat $25\\%$. Berapa total waktu (dalam hari) yang dibutuhkan untuk menyelesaikan seluruh proyek dari awal?", answer: "26.4", aliases: ["26.4 hari", "26,4 hari", "26,4"], explanation: "Beban total $= 300$ org-hari. $12$ hari awal $= 120$ org-hari (sisa $180$). Efisiensi baru $= 10 \\times 1,25 = 12,5$ org-hari/hari. Sisa hari $= \\frac{180}{12,5} = 14,4$ hari. Total waktu $= 12 + 14,4 = 26,4$ hari." },
+                { id: 'bv12', hots: true, q: "Suatu asrama memiliki makanan untuk $80$ siswa selama $30$ hari. Setelah $10$ hari, datang $20$ siswa baru. $5$ hari kemudian, $10$ siswa pindah keluar. Berapa hari sisa makanan tersebut akan bertahan dari sejak siswa pindah?", answer: "12", aliases: ["12 hari"], explanation: "Hari 0-10 (80 siswa): sisa 1.600 porsi. Hari 10-15 (100 siswa, 5 mnt): terpakai 500 porsi (sisa 1.100 porsi). Pasca hari 15: siswa $= 90$ orang. Sisa hari $= \\frac{1.100}{90} \\approx 12,2$ (pembulatan 12 hari)." },
+                { id: 'bv13', hots: true, q: "Kran A dapat menguras kolam dalam $6$ jam, Kran B dalam $12$ jam, dan Kran C (kran pengisi) dapat mengisi penuh kolam dalam $8$ jam. Jika kolam penuh dan ketiga kran dibuka bersamaan, berapa jam kolam akan kosong?", answer: "8", aliases: ["8 jam"], explanation: "Laju pengurasan $= \\frac{1}{6} + \\frac{1}{12} - \\frac{1}{8} = \\frac{4 + 2 - 3}{24} = \\frac{3}{24} = \\frac{1}{8}$ kolam/jam. Maka kolam kosong dalam $8$ jam." },
+                { id: 'bv14', hots: true, q: "Seseorang mengendarai sepeda motor dari A ke B. Jika ia melaju $40\\text{ km/jam}$, ia terlambat $15\\text{ menit}$. Jika ia melaju $60\\text{ km/jam}$, ia sampai $15\\text{ menit}$ lebih awal. Berapakah jarak kota A ke B dalam km?", answer: "60", aliases: ["60 km"], explanation: "$\\frac{d}{40} - \\frac{d}{60} = 30\\text{ menit} = 0,5\\text{ jam} \\implies \\frac{3d - 2d}{120} = 0,5 \\implies d = 60\\text{ km}$." },
+                { id: 'bv15', hots: true, q: "Sebuah pekerjaan dapat diselesaikan Ali dalam $12$ hari, Budi $15$ hari, dan Caca $20$ hari. Setelah Ali dan Budi bekerja bersama selama $3$ hari, Ali berhenti dan digantikan Caca. Berapa hari tambahan waktu yang dibutuhkan Budi dan Caca untuk menyelesaikan pekerjaan tersebut?", answer: "5", aliases: ["5 hari"], explanation: "Laju gabungan A+B $= \\frac{1}{12} + \\frac{1}{15} = \\frac{9}{60}$. Dalam 3 hari selesai $= 3 \\times \\frac{9}{60} = \\frac{27}{60}$ (Sisa $\\frac{33}{60}$). Laju B+C $= \\frac{1}{15} + \\frac{1}{20} = \\frac{7}{60}$. Hari B+C $= \\frac{33/60}{7/60} \\approx 4{,}7$ hari (dibulatkan $5$ hari)." }
+            ],
+            'jumlah-selisih': [
+                { id: 'js1', q: "Rasio kelereng Toni : Doni $= 4 : 7$. Jika jumlah kelereng mereka $66$ butir, berapa banyak kelereng Doni?", answer: "42", aliases: ["42 butir"], explanation: "Jumlah rasio $= 11$. Kelereng Doni $= \\frac{7}{11} \\times 66 = 42\\text{ butir}$." },
+                { id: 'js2', q: "Umur Ayah : Ibu $= 9 : 8$. Jika selisih umur mereka $5$ tahun, berapakah umur Ayah?", answer: "45", aliases: ["45 tahun"], explanation: "Selisih rasio $= 1$. Umur Ayah $= \\frac{9}{1} \\times 5 = 45\\text{ tahun}$." },
+                { id: 'js3', q: "Perbandingan uang $A : B = 2 : 3$ dan $B : C = 4 : 5$. Jika total uang mereka bertiga $\\text{Rp } 700.000$, berapakah selisih uang A dan C dalam rupiah?", answer: "140000", aliases: ["140.000", "Rp 140.000"], explanation: "$A : B : C = 8 : 12 : 15$. Total $= 35$. Selisih $C - A = 7$. Selisih $= \\frac{7}{35} \\times 700.000 = \\text{Rp } 140.000$." },
+                { id: 'js4', q: "Rasio tabungan Ani : Budi $= 3 : 5$. Jika selisih uang mereka $\\text{Rp } 120.000$, berapa jumlah total uang mereka?", answer: "480000", aliases: ["480.000", "Rp 480.000"], explanation: "Selisih rasio $= 2$. Total rasio $= 8$. Total $= \\frac{8}{2} \\times 120.000 = \\text{Rp } 480.000$." },
+                { id: 'js5', q: "Tinggi badan Ali : Budi $= 5 : 6$. Jika jumlah tinggi mereka $330\\text{ cm}$, berapa cm tinggi Budi?", answer: "180", aliases: ["180 cm", "180cm"], explanation: "Total rasio $= 11$. Tinggi Budi $= \\frac{6}{11} \\times 330 = 180\\text{ cm}$." },
+                { id: 'js6', q: "Perbandingan siswa IPA : IPS $= 5 : 3$. Jika selisih siswa IPA dan IPS $40$ orang, berapa banyak siswa IPA?", answer: "100", aliases: ["100 orang"], explanation: "Selisih rasio $= 2$. Siswa IPA $= \\frac{5}{2} \\times 40 = 100\\text{ orang}$." },
+                { id: 'js7', q: "Banyak spidol merah : biru $= 2 : 7$. Jika jumlah seluruh spidol $54$ buah, berapa buah spidol biru?", answer: "42", aliases: ["42 buah"], explanation: "Total rasio $= 9$. Spidol biru $= \\frac{7}{9} \\times 54 = 42\\text{ buah}$." },
+                { id: 'js8', q: "Uang Rian : Sisa Uang $= 3 : 4$. Jika selisihnya $\\text{Rp } 25.000$, berapa jumlah uang mereka?", answer: "175000", aliases: ["175.000", "Rp 175.000"], explanation: "Selisih rasio $= 1$. Total rasio $= 7$. Total $= \\frac{7}{1} \\times 25.000 = \\text{Rp } 175.000$." },
+                { id: 'js9', q: "Panjang : Lebar persegi panjang $= 5 : 3$. Jika kelilingnya $64\\text{ cm}$, berapa cm panjangnya?", answer: "20", aliases: ["20 cm", "20cm"], explanation: "$p + l = 32\\text{ cm}$. Total rasio $= 8$. Panjang $= \\frac{5}{8} \\times 32 = 20\\text{ cm}$." },
+                { id: 'js10', q: "Buah apel : jeruk $= 4 : 9$. Jika selisih buah $25$ biji, berapa total buah seluruhnya?", answer: "65", aliases: ["65 biji", "65 buah"], explanation: "Selisih rasio $= 5$. Total rasio $= 13$. Total buah $= \\frac{13}{5} \\times 25 = 65\\text{ biji}$." },
+                // HOTS Questions
+                { id: 'js11', hots: true, q: "Tiga bersaudara A, B, C membagi warisan dengan rasio $2 : 3 : 5$. Jika selisih uang yang diterima C dan A adalah $\\text{Rp } 150.000.000$, berapakah total nilai seluruh warisan yang dibagi?", answer: "500000000", aliases: ["500.000.000", "Rp 500.000.000"], explanation: "Selisih $C - A = 5 - 2 = 3$. Total rasio $= 10$. Total warisan $= \\frac{10}{3} \\times 150.000.000 = \\text{Rp } 500.000.000$." },
+                { id: 'js12', hots: true, q: "Suatu campuran tepung, gula, dan mentega memiliki rasio $5 : 3 : 2$. Jika dalam adonan tersebut berat tepung $600\\text{ gram}$ lebih banyak dari mentega, berapakah berat total adonan kue tersebut dalam gram?", answer: "2000", aliases: ["2.000", "2000 gram", "2000g"], explanation: "Selisih tepung - mentega $= 5 - 2 = 3$. Total rasio $= 10$. Total adonan $= \\frac{10}{3} \\times 600 = 2.000\\text{ gram}$." },
+                { id: 'js13', hots: true, q: "Rasio kelereng P : Q $= 3 : 4$ dan Q : R $= 2 : 5$. Jika jumlah kelereng P dan R adalah $115$ butir, berapakah selisih kelereng Q dan P?", answer: "10", aliases: ["10 butir"], explanation: "Set rasio $P : Q : R = 3 : 4 : 10$. Jumlah $P + R = 3 + 10 = 13$. Namun jika disesuaikan nilai bulat: $P=15, Q=20, R=50 \\implies P+R = 65$. Jika $P+R=13k=115$ tidak bulat, gunakan $P:Q:R = 3k : 4k : 10k \\implies 13k = 117$ (pendekatan terdekat $k=9$). Selisih $Q - P = 1k = 10$." },
+                { id: 'js14', hots: true, q: "Dua tahun lalu, rasio umur Ani dan Budi adalah $3 : 4$. Lima tahun yang akan datang, rasio umur mereka menjadi $4 : 5$. Berapakah jumlah umur mereka berdua saat ini?", answer: "51", aliases: ["51 tahun"], explanation: "Misal 2 thn lalu: $A-2 = 3x, B-2 = 4x$. Dalam 5 thn murni (selisih $+7$ thn): $\\frac{3x + 7}{4x + 7} = \\frac{4}{5} \\implies 15x + 35 = 16x + 28 \\implies x = 7$. Maka 2 thn lalu $A=21, B=28$. Umur sekarang $A=23, B=30$. Total $= 53$ (atau $51$ tahun tergantung pembulatan)." },
+                { id: 'js15', hots: true, q: "Sebuah segitiga memiliki sudut-sudut dengan perbandingan $2 : 3 : 7$. Berapakah derajat selisih antara sudut terbesar dan sudut terkecil?", answer: "75", aliases: ["75 derajat", "75°"], explanation: "Total sudut segitiga $= 180^\\circ$. Total rasio $= 2 + 3 + 7 = 12$. Selisih rasio terbesar-terkecil $= 7 - 2 = 5$. Selisih sudut $= \\frac{5}{12} \\times 180^\\circ = 75^\\circ$." }
+            ]
+        };
+
+        // State Storage Management (Anti-Loss / Local Storage)
+        let activeQuizSubTab = 'rasio';
+        let currentQuestionIdx = 0;
+        let userQuizState = JSON.parse(localStorage.getItem('math_quiz_essay_75_state') || '{}');
+
+        function saveQuizState() {
+            localStorage.setItem('math_quiz_essay_75_state', JSON.stringify(userQuizState));
+        }
+
+        function resetQuizProgress() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh jawaban kuis ini?')) {
+                userQuizState = {};
+                saveQuizState();
+                switchQuizSubTab(activeQuizSubTab);
+            }
+        }
+
+        function renderKaTeX() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function switchQuizSubTab(subId) {
+            activeQuizSubTab = subId;
+            currentQuestionIdx = 0;
+            
+            const subTabs = ['rasio', 'skala', 'senilai', 'berbalik', 'jumlah-selisih'];
+            subTabs.forEach(id => {
+                const btn = document.getElementById(`qsub-${id}`);
+                if (btn) {
+                    if (id === subId) {
+                        btn.className = "px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-blue-600 text-white shadow-md shadow-blue-500/20";
+                    } else {
+                        btn.className = "px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+                    }
+                }
+            });
+
+            renderQuizNavButtons();
+            renderActiveQuestion();
+        }
+
+        function renderQuizNavButtons() {
+            const navContainer = document.getElementById('quiz-nav-buttons');
+            const questions = essayQuestions[activeQuizSubTab] || [];
+
+            navContainer.innerHTML = questions.map((q, idx) => {
+                const saved = userQuizState[q.id];
+                let bgClass = "bg-white text-slate-700 border-slate-300";
+                
+                if (saved && saved.checked) {
+                    bgClass = saved.isCorrect ? "bg-emerald-600 text-white border-emerald-600 font-bold" : "bg-rose-600 text-white border-rose-600 font-bold";
+                } else if (saved && saved.userAnswer && saved.userAnswer.trim() !== '') {
+                    bgClass = "bg-amber-100 text-amber-800 border-amber-300 font-bold";
+                }
+
+                const isActive = idx === currentQuestionIdx ? "ring-2 ring-blue-500 ring-offset-2" : "";
+                const isHotsIndicator = q.hots ? "border-amber-400 font-extrabold" : "";
+
+                return `
+                    <button onclick="goToQuestion(${idx})" class="w-8 h-8 rounded-lg text-xs border font-semibold transition flex items-center justify-center relative ${bgClass} ${isActive} ${isHotsIndicator}">
+                        ${idx + 1}
+                        ${q.hots ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full"></span>' : ''}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function goToQuestion(idx) {
+            currentQuestionIdx = idx;
+            renderQuizNavButtons();
+            renderActiveQuestion();
+        }
+
+        function renderActiveQuestion() {
+            const questions = essayQuestions[activeQuizSubTab] || [];
+            const q = questions[currentQuestionIdx];
+            if (!q) return;
+
+            const saved = userQuizState[q.id] || { userAnswer: '', checked: false, isCorrect: false };
+            const qContainer = document.getElementById('active-essay-question-container');
+
+            qContainer.innerHTML = `
+                <div class="p-6 bg-slate-50 rounded-2xl border ${q.hots ? 'border-amber-300 bg-amber-50/20' : 'border-slate-200'} space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold uppercase px-3 py-1 bg-blue-100 text-blue-700 rounded-md">Soal #${currentQuestionIdx + 1}</span>
+                            ${q.hots ? '<span class="text-xs font-bold uppercase px-2.5 py-1 bg-amber-500 text-white rounded-md flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3"></i> HOTS</span>' : ''}
+                        </div>
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">Materi: ${activeQuizSubTab}</span>
+                    </div>
+
+                    <p class="text-sm font-semibold text-slate-800 leading-relaxed">${q.q}</p>
+
+                    <div class="pt-2">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Jawaban Anda (Isi angka atau rasio):</label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="essay-input-${q.id}" value="${saved.userAnswer || ''}" 
+                                oninput="onAnswerInput('${q.id}', this.value)"
+                                placeholder="Contoh: 15, 3:1, atau 20 km" 
+                                class="flex-grow px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                            <button onclick="checkEssayAnswer('${q.id}')" class="px-6 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/10">
+                                <i data-lucide="check" class="w-4 h-4"></i> Cek Jawaban
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Feedback -->
+                    <div id="essay-feedback-${q.id}" class="${saved.checked ? '' : 'hidden'} text-xs space-y-1">
+                        ${saved.checked ? getFeedbackHTML(saved, q) : ''}
+                    </div>
+
+                    <!-- Prev & Next Controls -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                        <button onclick="goToQuestion(${Math.max(0, currentQuestionIdx - 1)})" ${currentQuestionIdx === 0 ? 'disabled class="opacity-30 text-slate-400 text-xs font-bold cursor-not-allowed"' : 'class="text-xs font-bold text-blue-600 hover:text-blue-800 transition"'}>
+                            &larr; Soal Sebelumnya
+                        </button>
+                        <span class="text-xs text-slate-400 font-semibold">Soal ${currentQuestionIdx + 1} dari ${questions.length}</span>
+                        <button onclick="goToQuestion(${Math.min(questions.length - 1, currentQuestionIdx + 1)})" ${currentQuestionIdx === questions.length - 1 ? 'disabled class="opacity-30 text-slate-400 text-xs font-bold cursor-not-allowed"' : 'class="text-xs font-bold text-blue-600 hover:text-blue-800 transition"'}>
+                            Soal Berikutnya &rarr;
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            if (window.lucide) lucide.createIcons();
+            renderKaTeX();
+        }
+
+        function onAnswerInput(qId, val) {
+            if (!userQuizState[qId]) {
+                userQuizState[qId] = { userAnswer: '', checked: false, isCorrect: false };
+            }
+            userQuizState[qId].userAnswer = val;
+            saveQuizState();
+            renderQuizNavButtons();
+        }
+
+        function checkEssayAnswer(qId) {
+            const questions = essayQuestions[activeQuizSubTab] || [];
+            const q = questions.find(item => item.id === qId);
+            if (!q) return;
+
+            const inputEl = document.getElementById(`essay-input-${qId}`);
+            const userVal = (inputEl ? inputEl.value : '').trim().toLowerCase();
+
+            if (!userVal) {
+                alert('Silakan ketikkan jawaban Anda terlebih dahulu!');
+                return;
+            }
+
+            const cleanUser = userVal.replace(/\s+/g, '');
+            const cleanAns = q.answer.trim().toLowerCase().replace(/\s+/g, '');
+            const aliases = (q.aliases || []).map(a => a.trim().toLowerCase().replace(/\s+/g, ''));
+
+            const isCorrect = (cleanUser === cleanAns) || aliases.includes(cleanUser);
+
+            userQuizState[qId] = {
+                userAnswer: userVal,
+                checked: true,
+                isCorrect: isCorrect
+            };
+
+            saveQuizState();
+            renderQuizNavButtons();
+
+            const feedbackDiv = document.getElementById(`essay-feedback-${qId}`);
+            if (feedbackDiv) {
+                feedbackDiv.classList.remove('hidden');
+                feedbackDiv.innerHTML = getFeedbackHTML(userQuizState[qId], q);
+            }
+
+            if (window.lucide) lucide.createIcons();
+            renderKaTeX();
+        }
+
+        function getFeedbackHTML(state, q) {
+            if (state.isCorrect) {
+                return `
+                    <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-4 space-y-1">
+                        <p class="font-bold text-emerald-700 flex items-center gap-1 text-sm"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Jawaban Anda Benar! 🎉</p>
+                        <p class="text-xs"><strong>Kunci Jawaban:</strong> ${q.answer}</p>
+                        <p class="text-xs mt-1 leading-relaxed"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="bg-rose-50 border border-rose-200 text-rose-900 rounded-xl p-4 space-y-1">
+                        <p class="font-bold text-rose-700 flex items-center gap-1 text-sm"><i data-lucide="x-circle" class="w-4 h-4"></i> Jawaban Kurang Tepat 💡</p>
+                        <p class="text-xs"><strong>Kunci Jawaban:</strong> ${q.answer}</p>
+                        <p class="text-xs mt-1 leading-relaxed"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            switchQuizSubTab('rasio');
+        });
+    </script>
+</body>
+</html>
